@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import httplib
 from resources import httplib2 as httplib2
 import urllib
@@ -5,6 +7,8 @@ import json
 import logging
 import webapp2
 from webapp2_extras import sessions
+
+from calendar_mgr import CalendarManager
 
 
 class BaseHandler(webapp2.RequestHandler):
@@ -25,9 +29,9 @@ class MainHandler(webapp2.RequestHandler):
         self.response.write('<a href="/login">Entrar</a>')
 
 
-cliente_id = "598778698756-8d90gr52eqgnn5lv90loa5dookra7k0a.apps.googleusercontent.com"
-cliente_secret = "VAUirY5cDs7EtM4NuibNMry3"
-redirect_uri = "http://swactividad3.appspot.com/callback_uri"
+cliente_id = '598778698756-8d90gr52eqgnn5lv90loa5dookra7k0a.apps.googleusercontent.com'
+cliente_secret = 'VAUirY5cDs7EtM4NuibNMry3'
+redirect_uri = 'http://swactividad3.appspot.com/callback_uri'
 config = {'webapp2_extras.sessions': {'secret_key': 'my-super-secret-key'}}
 
 
@@ -73,14 +77,26 @@ class OAuthHandler(BaseHandler):
 
         access_token = json_cuerpo['access_token']
         self.session['access_token'] = access_token
-        logging.debug(access_token)
-
         self.redirect('/calendars')
 
 
 class CalendarHandler(BaseHandler):
     def get(self):
-        self.response.write('<a href="/login">Entrar</a>')
+        calendar_mgr = CalendarManager(self.session['access_token'])
+        list = calendar_mgr.get_calendars()
+        # list:
+        # [
+        #   {
+        #       "id": value,
+        #       "summary": value (nombre)
+        #   },
+        #   {
+        #       "id": value,
+        #       "summary": value
+        #   },
+        #   ...
+        # ]
+
 
 
 app = webapp2.WSGIApplication([
