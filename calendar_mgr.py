@@ -18,4 +18,4 @@ class CalendarManager:
         calendar_list = []
         for calendar in json_response['items']:
             calendar_list.append({'id': calendar['id'], 'summary': calendar['summary']})
-        return calendar_list
+        return {"calendarios": calendar_list}
