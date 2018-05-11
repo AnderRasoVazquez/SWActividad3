@@ -23,7 +23,7 @@ class CalendarManager:
         for calendar in json_response['items']:
             calendar_list.append({'id': calendar['id'], 'summary': calendar['summary']})
 
-        return calendar_list
+        return {"calendarios": calendar_list}
 
     def get_events(self, calendar_id, time_min=datetime.datetime.utcnow(), months=6):
         uri = 'https://www.googleapis.com/calendar/v3/calendars/' + urllib.quote(calendar_id) + '/events'
