@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 import datetime
 import resources.httplib2 as httplib2
@@ -43,24 +45,31 @@ class CalendarManager:
                                       method=method, headers=headers)
 
         json_response = json.loads(body)
-        return json_response['items']
-        # event_list = []
-        # try:
-        #     for event in json_response['items']:
-        #         new_event = {}
-        #         keys = ['id', 'summary', 'description', 'start', 'end', 'location']
-        #         for key in keys:
-        #             if key in event:
-        #                 new_event[key] = event[key]
-        #             else:
-        #                 new_event[key] = ''
-        #         keys = ['start', 'end']
-        #         for key in keys:
-        #             if key in event and 'date' in event[key]:
-        #                 new_event[key] = event[key]['date']
-        #             else:
-        #                 new_event[key] = ''
-        #         event_list.append(new_event)
-        #     return event_list
-        # except KeyError:
-        #     return []
+        event_list = []
+        for event in json_response['items']:
+            tmp_event = {}
+
+            if 'summary' in event:
+                tmp_event['summary'] = event['summary']
+            else:
+                tmp_event['summary'] = '(Sin título)'
+
+            if 'date' in event['start']:
+                # evento de día completo (festivos, etc.)
+                tmp_event['start'] = event['start']['date']
+            elif 'dateTime' in event['start']:
+                # con hora de comienzo
+                # nos quedamos con los 10 primeros caracteres (yyyy-mm-dd)
+                tmp_event['start'] = event['start']['dateTime'][0:11]
+            else:
+                tmp_event['start'] = ''
+
+            if 'location' in event:
+                # TODO: encontrar forma de pasar a coordenadas
+                tmp_event['location'] = event['location']
+            else:
+                tmp_event['location'] = ''
+
+            event_list.append(tmp_event)
+
+        return {"eventos": event_list}
