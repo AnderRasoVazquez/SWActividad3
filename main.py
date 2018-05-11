@@ -96,24 +96,25 @@ class CalendarHandler(BaseHandler):
         data = calendar_mgr.get_calendars()
         template = JINJA_ENVIRONMENT.get_template("calendarios.html")
         self.response.out.write(template.render(data))
-        # data:
-        # [
-        #   {
-        #       "id": value,
-        #       "summary": value (nombre)
-        #   },
-        #   {
-        #       "id": value,
-        #       "summary": value
-        #   },
-        #   ...
-        # ]
 
+
+class EventHandler(BaseHandler):
+    def get(self):
+        calendars = ["6el5db7802aqjoms6s3ufql55g@group.calendar.google.com",
+                     "davidperezgo@gmail.com",
+                     "5920l0a8knd241d2ncr6arnn4k@group.calendar.google.com",
+                     "2o8vdie0jrpuq2gvht503keocg@group.calendar.google.com",
+                     "addressbook#contacts@group.v.calendar.google.com",
+                     "es.spain#holiday@group.v.calendar.google.com"]
+        calendar_mgr = CalendarManager(self.session['access_token'])
+        calendar_list = calendar_mgr.get_calendars_and_events(calendars)
+        self.response.write(json.dumps(calendar_list, indent=4, sort_keys=True))
 
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/login', LoginAndAuthorize),
     ('/callback_uri', OAuthHandler),
-    ('/calendars', CalendarHandler)
+    ('/calendars', CalendarHandler),
+    ('/events', EventHandler)
 ], config=config, debug=True)

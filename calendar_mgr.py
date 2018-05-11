@@ -44,6 +44,54 @@ class CalendarManager:
 
         return {"calendarios": calendar_list}
 
+    def get_calendars_and_events(self, calendar_list):
+        """Devuelve un json con información acerca de cada uno de los calendarios correspondientes
+        a los ids pasados. Por cada calendario se devuelve su nombre, color y lista de eventos futuros.
+
+        json:
+        {
+            "calendarios":  [
+                                {
+                                    "summary": value (nombre)
+                                    "color": value
+                                    "events":   [
+                                                   {
+                                                        "summary": value (nombre)
+                                                        "start": value
+                                                        "location": value
+                                                    },
+                                                    {
+                                                        "summary": value (nombre)
+                                                        "start": value
+                                                        "location": value
+                                                    },
+                                                    ...
+                                                ]
+                                },
+                                ...
+                            ]
+        }
+        """
+        calendars = []
+
+        main_uri = 'https://www.googleapis.com/calendar/v3/users/me/calendarList/'
+        method = 'GET'
+        headers = {'User-Agent': 'Python Client',
+                   'Authorization': 'Bearer ' + self.token}
+        for id in calendar_list:
+            uri = main_uri + urllib.quote(id)
+            conn = httplib2.Http()
+            response, body = conn.request(uri, method=method, headers=headers)
+
+            json_response = json.loads(body)
+            tmp_calendar = {'summary': json_response['summary'],
+                            'color': json_response['colorId'],
+                            'events': self._get_events(id)['eventos']}
+
+            calendars.append(tmp_calendar)
+
+        return {'calendarios': calendars}
+
     def _get_events(self, calendar_id, time_min=datetime.datetime.utcnow(), months=6):
         """Devuelve un json con la lista de eventos pertenecientes al calendario con id calendar_id.
 
