@@ -12,6 +12,23 @@ class CalendarManager:
         self.token = auth_token
 
     def get_calendars(self):
+        """Devuelve un json con una lista de calendarios.
+
+        json:
+        {
+            "calendarios":  [
+                                {
+                                    "id": value,
+                                    "summary": value (nombre)
+                                },
+                                {
+                                    "id": value,
+                                    "summary": value (nombre)
+                                },
+                                ...
+                            ]
+        }
+        """
         uri = 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
         method = 'GET'
         headers = {'User-Agent': 'Python Client',
@@ -27,7 +44,34 @@ class CalendarManager:
 
         return {"calendarios": calendar_list}
 
-    def get_events(self, calendar_id, time_min=datetime.datetime.utcnow(), months=6):
+    def _get_events(self, calendar_id, time_min=datetime.datetime.utcnow(), months=6):
+        """Devuelve un json con la lista de eventos pertenecientes al calendario con id calendar_id.
+
+        time_min se utiliza para indicar la fecha mínima de finalización que deben tener los eventos.
+        Cualquier evento que termine antes de la fecha time_min no será incluido en el resultado.
+        Valor por defecto de time_min: fecha actual. Para no filtrar por fecha, pasar time_min como None.
+
+        months, en caso de que time_min != None, indica el número de meses después de time_min en los
+        que recogerán los eventos. Cualquier evento que termine month meses después de time_min
+        no será incluido en el resultado.
+
+        json:
+        {
+            "eventos":  [
+                            {
+                                "summary": value (nombre)
+                                "start": value
+                                "location": value
+                            },
+                            {
+                                "summary": value (nombre)
+                                "start": value
+                                "location": value
+                            },
+                            ...
+                        ]
+        }
+        """
         uri = 'https://www.googleapis.com/calendar/v3/calendars/' + urllib.quote(calendar_id) + '/events'
         method = 'GET'
         headers = {'User-Agent': 'Python Client',
