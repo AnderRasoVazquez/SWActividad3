@@ -7,8 +7,16 @@ import json
 import logging
 import webapp2
 from webapp2_extras import sessions
+import jinja2
+import os
 
 from calendar_mgr import CalendarManager
+
+
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'html')),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True)
 
 
 class BaseHandler(webapp2.RequestHandler):
@@ -26,7 +34,10 @@ class BaseHandler(webapp2.RequestHandler):
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('<a href="/login">Entrar</a>')
+        # self.response.write('<a href="/login">Entrar</a>')
+        template = JINJA_ENVIRONMENT.get_template("index.html")
+        data = {}
+        self.response.out.write(template.render(data))
 
 
 cliente_id = '598778698756-8d90gr52eqgnn5lv90loa5dookra7k0a.apps.googleusercontent.com'
