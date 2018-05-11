@@ -31,18 +31,12 @@
     <div id="content">
         <h4>Selecciona los calendarios que quieres ver</h4>
         <form>
+            {% for element in calendarios %}
             <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1" value="suvalor" name="calendarios[]" checked>
-                <label class="form-check-label" for="exampleCheck1">Casa</label>
+                <input type="checkbox" class="form-check-input" id="exampleCheck{{loop.index}}" value="{{element['id']}}" name="calendarios[]" checked>
+                <label class="form-check-label" for="exampleCheck{{loop.index}}">{{element["summary"]}}</label>
             </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck2" value="suvalor" name="calendarios[]" checked>
-                <label class="form-check-label" for="exampleCheck2">Universidad</label>
-            </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck3" value="suvalor" name="calendarios[]" checked>
-                <label class="form-check-label" for="exampleCheck3">Exámenes</label>
-            </div>
+            {% endfor %}
             <button type="submit" class="btn btn-primary">Ver eventos</button>
         </form>
     </div>
