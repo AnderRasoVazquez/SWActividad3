@@ -56,17 +56,22 @@ class CalendarManager:
             "calendarios":  [
                                 {
                                     "summary": value (nombre),
-                                    "color": value,
+                                    "description": value
+                                    "color": value (hex),
                                     "events":   [
                                                    {
                                                         "summary": value (nombre),
                                                         "start": value,
-                                                        "location": value,
+                                                        "location": {
+                                                                        "address": value,
+                                                                        "lat": value,
+                                                                        "lng": value
+                                                                    }
                                                     },
                                                     {
                                                         "summary": value (nombre),
                                                         "start": value,
-                                                        "location": value,
+                                                        ...
                                                     },
                                                     ...
                                                 ]
@@ -94,6 +99,11 @@ class CalendarManager:
             tmp_calendar = {'summary': json_response['summary'],
                             'color': self.calendar_colors[json_response['colorId']]['background'],
                             'events': self._get_events(id)['eventos']}
+            if 'description' in json_response:
+                description = json_response['description']
+            else:
+                description = ''
+            tmp_calendar['description'] = description
             calendars.append(tmp_calendar)
 
         return {'calendarios': calendars}
