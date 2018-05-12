@@ -30,10 +30,10 @@
     </nav>
     <div id="content">
         <h4>Selecciona los calendarios que quieres ver</h4>
-        <form>
+        <form action="/events" method="post">
             {% for element in calendarios %}
             <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck{{loop.index}}" value="{{element['id']}}" name="calendarios[]" checked>
+                <input type="checkbox" class="form-check-input" id="exampleCheck{{loop.index}}" value="{{element['id']}}" name="calendarios[]">
                 <label class="form-check-label" for="exampleCheck{{loop.index}}">{{element["summary"]}}</label>
             </div>
             {% endfor %}
