@@ -92,7 +92,7 @@ class CalendarManager:
 
             json_response = json.loads(body)
             tmp_calendar = {'summary': json_response['summary'],
-                            'color': self.calendar_colors[json_response['colorId']]['foreground'],
+                            'color': self.calendar_colors[json_response['colorId']]['background'],
                             'events': self._get_events(id)['eventos']}
             calendars.append(tmp_calendar)
 
@@ -199,8 +199,8 @@ class CalendarManager:
         uri = 'https://maps.googleapis.com/maps/api/geocode/json'
         method = 'GET'
         lang = 'language=' + urllib.quote('es')
-        key = 'key=' + urllib.qoute(self.api_key)
-        addr = 'address=' + urllib.quote(address)
+        key = 'key=' + urllib.quote(self.api_key)
+        addr = 'address=' + urllib.quote(address.encode('utf8'))
         param = key + '&' + addr + '&' + lang
 
         conn = httplib2.Http()
@@ -208,11 +208,11 @@ class CalendarManager:
 
         json_response = json.loads(body)
         try:
+            obj = json_response['results'][0]['geometry']
             address_json = {'address': address,
-                            'lat': json_response['geometry']['location']['lat'],
-                            'lng': json_response['geometry']['location']['lng']}
+                            'lat': obj['location']['lat'],
+                            'lng': obj['location']['lng']}
         except KeyError:
-            # algún error como multiples direcciones posibles, etc.
             address_json = {'address': address,
                             'lat': '',
                             'lng': ''}
