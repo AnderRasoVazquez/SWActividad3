@@ -8,8 +8,11 @@ import urllib
 
 class CalendarManager:
 
-    def __init__(self, auth_token):
+    def __init__(self, auth_token, api_key):
         self.token = auth_token
+        self.api_key = api_key
+        self.calendar_colors = {}
+        self.event_colors = {}
 
     def get_calendars(self):
         """Devuelve un json con una lista de calendarios.
@@ -52,18 +55,18 @@ class CalendarManager:
         {
             "calendarios":  [
                                 {
-                                    "summary": value (nombre)
-                                    "color": value
+                                    "summary": value (nombre),
+                                    "color": value,
                                     "events":   [
                                                    {
-                                                        "summary": value (nombre)
-                                                        "start": value
-                                                        "location": value
+                                                        "summary": value (nombre),
+                                                        "start": value,
+                                                        "location": value,
                                                     },
                                                     {
-                                                        "summary": value (nombre)
-                                                        "start": value
-                                                        "location": value
+                                                        "summary": value (nombre),
+                                                        "start": value,
+                                                        "location": value,
                                                     },
                                                     ...
                                                 ]
@@ -78,6 +81,10 @@ class CalendarManager:
         method = 'GET'
         headers = {'User-Agent': 'Python Client',
                    'Authorization': 'Bearer ' + self.token}
+
+        if not self.calendar_colors:
+            self._get_color_map()
+
         for id in calendar_list:
             uri = main_uri + urllib.quote(id)
             conn = httplib2.Http()
@@ -85,9 +92,8 @@ class CalendarManager:
 
             json_response = json.loads(body)
             tmp_calendar = {'summary': json_response['summary'],
-                            'color': json_response['colorId'],
+                            'color': self.calendar_colors[json_response['colorId']]['foreground'],
                             'events': self._get_events(id)['eventos']}
-
             calendars.append(tmp_calendar)
 
         return {'calendarios': calendars}
@@ -107,14 +113,14 @@ class CalendarManager:
         {
             "eventos":  [
                             {
-                                "summary": value (nombre)
-                                "start": value
-                                "location": value
+                                "summary": value (nombre),
+                                "start": value,
+                                "location": value,
                             },
                             {
-                                "summary": value (nombre)
-                                "start": value
-                                "location": value
+                                "summary": value (nombre),
+                                "start": value,
+                                "location": value,
                             },
                             ...
                         ]
@@ -157,11 +163,58 @@ class CalendarManager:
                 tmp_event['start'] = ''
 
             if 'location' in event:
-                # TODO: encontrar forma de pasar a coordenadas
-                tmp_event['location'] = event['location']
+                tmp_event['location'] = self._get_coordinates(event['location'])
             else:
                 tmp_event['location'] = ''
 
             event_list.append(tmp_event)
 
         return {"eventos": event_list}
+
+    def _get_color_map(self):
+        uri = 'https://www.googleapis.com/calendar/v3/colors'
+        method = 'GET'
+        headers = {'User-Agent': 'Python Client',
+                   'Authorization': 'Bearer ' + self.token}
+
+        conn = httplib2.Http()
+        response, body = conn.request(uri, method=method, headers=headers)
+
+        json_response = json.loads(body)
+        if 'calendar' in json_response:
+            self.calendar_colors = json_response['calendar']
+        if 'event' in json_response:
+            self.event_colors = json_response['event']
+
+    def _get_coordinates(self, address):
+        """Devuelve un diccionario con la longitud y latitud de la dirección dada.
+
+        formato:
+        {
+            "address": value,
+            "lat": value (latitud),
+            "lng": value (longitud)
+        }
+        """
+        uri = 'https://maps.googleapis.com/maps/api/geocode/json'
+        method = 'GET'
+        lang = 'language=' + urllib.quote('es')
+        key = 'key=' + urllib.qoute(self.api_key)
+        addr = 'address=' + urllib.quote(address)
+        param = key + '&' + addr + '&' + lang
+
+        conn = httplib2.Http()
+        response, body = conn.request(uri + '?' + param, method=method)
+
+        json_response = json.loads(body)
+        try:
+            address_json = {'address': address,
+                            'lat': json_response['geometry']['location']['lat'],
+                            'lng': json_response['geometry']['location']['lng']}
+        except KeyError:
+            # algún error como multiples direcciones posibles, etc.
+            address_json = {'address': address,
+                            'lat': '',
+                            'lng': ''}
+
+        return address_json

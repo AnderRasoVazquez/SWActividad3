@@ -41,6 +41,7 @@ class MainHandler(webapp2.RequestHandler):
 
 cliente_id = '598778698756-8d90gr52eqgnn5lv90loa5dookra7k0a.apps.googleusercontent.com'
 cliente_secret = 'VAUirY5cDs7EtM4NuibNMry3'
+api_key = 'AIzaSyBK8NhJ7xM9D12RFRb-krQpMtc06b4nWE0'
 redirect_uri = 'http://swactividad3.appspot.com/callback_uri'
 config = {'webapp2_extras.sessions': {'secret_key': 'my-super-secret-key'}}
 
@@ -92,7 +93,7 @@ class OAuthHandler(BaseHandler):
 
 class CalendarHandler(BaseHandler):
     def get(self):
-        calendar_mgr = CalendarManager(self.session['access_token'])
+        calendar_mgr = CalendarManager(self.session['access_token'], api_key)
         data = calendar_mgr.get_calendars()
         template = JINJA_ENVIRONMENT.get_template("calendarios.html")
         self.response.out.write(template.render(data))
@@ -100,11 +101,19 @@ class CalendarHandler(BaseHandler):
 
 class EventHandler(BaseHandler):
     def get(self):
-        self.redirect("/")
+        calendars = ["6el5db7802aqjoms6s3ufql55g@group.calendar.google.com",
+                     "davidperezgo@gmail.com",
+                     "5920l0a8knd241d2ncr6arnn4k@group.calendar.google.com",
+                     "2o8vdie0jrpuq2gvht503keocg@group.calendar.google.com",
+                     "addressbook#contacts@group.v.calendar.google.com",
+                     "es.spain#holiday@group.v.calendar.google.com"]
+        calendar_mgr = CalendarManager(self.session['access_token'], api_key)
+        data = calendar_mgr.get_calendars_and_events(calendars)
+        self.response.write(json.dumps(data, indent=4, sort_keys=True))
 
     def post(self):
         calendars = self.request.get('calendarios[]', allow_multiple=True)
-        calendar_mgr = CalendarManager(self.session['access_token'])
+        calendar_mgr = CalendarManager(self.session['access_token'], api_key)
         data = calendar_mgr.get_calendars_and_events(calendars)
         template = JINJA_ENVIRONMENT.get_template("eventos.html")
         self.response.out.write(template.render(data))
