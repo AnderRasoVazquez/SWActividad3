@@ -175,7 +175,7 @@ class CalendarManager:
             if 'location' in event:
                 tmp_event['location'] = self._get_coordinates(event['location'])
             else:
-                tmp_event['location'] = ''
+                tmp_event['location'] = self._get_coordinates('')
 
             event_list.append(tmp_event)
 
@@ -222,7 +222,7 @@ class CalendarManager:
             address_json = {'address': address,
                             'lat': obj['location']['lat'],
                             'lng': obj['location']['lng']}
-        except KeyError:
+        except (KeyError, IndexError):
             address_json = {'address': address,
                             'lat': '',
                             'lng': ''}
