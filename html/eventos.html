@@ -168,6 +168,8 @@
                             {% endif %}
                             {% endfor %}
 
+
+
                         </div>
                         <div class="col-sm">
                             <div id="map{{calendario_loop.index}}" class="map"></div>
@@ -184,17 +186,48 @@
 </div>
 
 <!-- Mi javascript -->
-<!--<script type="text/javascript">-->
-    <!--function myMap() {-->
-        <!--var mapOptions = {-->
-            <!--center: new google.maps.LatLng(43.2626276, -2.9475673),-->
-            <!--zoom: 15,-->
-            <!--mapTypeId: google.maps.MapTypeId.HYBRID-->
-        <!--}-->
-        <!--var map = new google.maps.Map(document.getElementById("map"), mapOptions);-->
-    <!--}-->
-<!--</script>-->
-<script src="https://maps.googleapis.com/maps/api/js?callback=myMap"></script>
+<script type="text/javascript">
+    function myMap() {
+
+        {% for calendario in calendarios %}
+        {% set calendario_loop = loop %}
+
+        var myLatLng = [
+            {% for evento in calendario["events"] %}
+                {% if evento["location"]["address"] != "" %}
+                    { lat: {{ evento["location"]["lat"] }}, lng: {{ evento["location"]["lng"] }}, title: '{{evento["location"]["address"]}}' },
+                {% endif %}
+            {% endfor %}
+        ];
+
+        {% for evento in calendario["events"] %}
+            {% if evento["location"]["address"] != "" %}
+                var mapOptions = {
+                    center: new google.maps.LatLng({{ evento["location"]["lat"] }}, {{ evento["location"]["lng"] }}),
+                    zoom: 14,
+                    mapTypeId: google.maps.MapTypeId.HYBRID
+                }
+                {% break %}
+            {% endif %}
+        {% endfor %}
+
+        var map = new google.maps.Map(document.getElementById("map{{calendario_loop.index}}"), mapOptions);
+                        for(i = 0; i < myLatLng.length; i++) {
+                        var marker = new google.maps.Marker({
+                            position: { lat: myLatLng[i]['lat'], lng: myLatLng[i]['lng'] },
+                            title: myLatLng[i]['title'],
+                            map: map
+
+                        });
+                };
+
+        {% endfor %}
+    }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBK8NhJ7xM9D12RFRb-krQpMtc06b4nWE0&callback=myMap"></script>
+
+<!--<script src="https://maps.googleapis.com/maps/api/js?callback=myMap"></script>-->
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
