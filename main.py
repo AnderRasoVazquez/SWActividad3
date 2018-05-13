@@ -15,7 +15,7 @@ from calendar_mgr import CalendarManager
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'html')),
-    extensions=['jinja2.ext.autoescape'],
+    extensions=['jinja2.ext.autoescape', 'jinja2.ext.loopcontrols'],
     autoescape=True)
 
 
@@ -101,15 +101,7 @@ class CalendarHandler(BaseHandler):
 
 class EventHandler(BaseHandler):
     def get(self):
-        calendars = ["6el5db7802aqjoms6s3ufql55g@group.calendar.google.com",
-                     "davidperezgo@gmail.com",
-                     "5920l0a8knd241d2ncr6arnn4k@group.calendar.google.com",
-                     "2o8vdie0jrpuq2gvht503keocg@group.calendar.google.com",
-                     "addressbook#contacts@group.v.calendar.google.com",
-                     "es.spain#holiday@group.v.calendar.google.com"]
-        calendar_mgr = CalendarManager(self.session['access_token'], api_key)
-        data = calendar_mgr.get_calendars_and_events(calendars)
-        self.response.write(json.dumps(data, indent=4, sort_keys=True))
+        self.redirect("/")
 
     def post(self):
         calendars = self.request.get('calendarios[]', allow_multiple=True)
