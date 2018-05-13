@@ -1,191 +1,60 @@
-<!doctype html>
-<html lang="es">
+{% extends "base.html" %}
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% block content %}
+<h4>Mis calendarios</h4>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/style.css">
+<div class="accordion" id="accordionExample">
 
-    <title>Eventos</title>
-</head>
+    {% for calendario in calendarios %}
+    {% set calendario_loop = loop %}
+    <div class="card">
+        <div class="card-header" id="heading{{calendario_loop.index}}">
+            <h5 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse{{calendario_loop.index}}" aria-expanded="false" aria-controls="collapse{{calendario_loop.index}}">
+                    <span style="color:{{calendario['color']}};">&#9724;</span> {{calendario["summary"]}}
+                </button>
+            </h5>
+        </div>
+        <div id="collapse{{calendario_loop.index}}" class="collapse" aria-labelledby="heading{{calendario_loop.index}}" data-parent="#accordionExample">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm">
 
+                        {% for evento in calendario["events"] %}
+                        {% set event_loop = loop %}
+                        <!--eventos-->
+                        <p>
+                            <a class="btn btn-light" data-toggle="collapse" href="#collapseExample-{{calendario_loop.index}}-{{event_loop.index}}" role="button" aria-expanded="false" aria-controls="collapseExample-{{calendario_loop.index}}-{{event_loop.index}}">
+                                <span class="badge badge-pill badge-info">{{evento["start"]}}</span> {{evento["summary"]}}{% if evento["description"] != "" %} &#x25BC;{% endif %}
+                            </a>
+                        </p>
 
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/">Mapper</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
-                <a class="nav-link" href="/">Inicio<span class="sr-only">(current)</span></a>
-            </li>
-        </ul>
-    </div>
-</nav>
-<div id="content">
-    <h4>Mis calendarios</h4>
-
-    <div class="accordion" id="accordionExample">
-
-        <!--cada card es un calendario-->
-
-
-        <!--<div class="card">-->
-            <!--<div class="card-header" id="headingOne">-->
-                <!--<h5 class="mb-0">-->
-                    <!--<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">-->
-                        <!--<span style="color:#5900B7;">&#9724;</span> anderraso@gmail.com-->
-                    <!--</button>-->
-                <!--</h5>-->
-            <!--</div>-->
-
-            <!--&lt;!&ndash; Quitar el data parent hace que no se cierre al abrir uno nuevo &ndash;&gt;-->
-            <!--<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">-->
-                <!--<div class="card-body">-->
-                    <!--<div class="row">-->
-                        <!--<div class="col-sm">-->
-                            <!--&lt;!&ndash; empiezan los eventos &ndash;&gt;-->
-                            <!--<p>-->
-                                <!--<a class="btn btn-light" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">-->
-                                    <!--<span class="badge badge-pill badge-info">10/05/18</span> Escuchar a tope de K-POP-->
-                                <!--</a>-->
-                            <!--</p>-->
-                            <!--<div class="collapse" id="collapseExample">-->
-                                <!--<div class="card card-body">-->
-                                    <!--Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.-->
-                                <!--</div>-->
-                            <!--</div>-->
-
-
-                            <!--<p>-->
-                                <!--<a class="btn btn-light" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">-->
-                                    <!--<span class="badge badge-pill badge-info">10/05/18</span> Decirle al senpai que me noticee de una vez-->
-                                <!--</a>-->
-                            <!--</p>-->
-                            <!--<div class="collapse" id="collapseExample">-->
-                                <!--<div class="card card-body">-->
-                                    <!--Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.-->
-                                <!--</div>-->
-                            <!--</div>-->
-
-
-                            <!--<p>-->
-                                <!--<a class="btn btn-light" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">-->
-                                    <!--<span class="badge badge-pill badge-info">10/05/18</span> Ir al salón del manga-->
-                                <!--</a>-->
-                            <!--</p>-->
-                            <!--<div class="collapse" id="collapseExample">-->
-                                <!--<div class="card card-body">-->
-                                    <!--Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.-->
-                                <!--</div>-->
-                            <!--</div>-->
-
-                            <!--&lt;!&ndash; terminan los eventos &ndash;&gt;-->
-                        <!--</div>-->
-                        <!--<div class="col-sm">-->
-                            <!--<div id="map" class="map"></div>-->
-                            <!--&lt;!&ndash; <div id="map" style="width:400px;height:400px;background:yellow"></div> &ndash;&gt;-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-
-        <!--&lt;!&ndash;fin del card&ndash;&gt;-->
-        <!--<div class="card">-->
-            <!--<div class="card-header" id="headingTwo">-->
-                <!--<h5 class="mb-0">-->
-                    <!--<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">-->
-                        <!--<span style="color:#F1CE00;">&#9724;</span> Casa compartido-->
-                    <!--</button>-->
-                <!--</h5>-->
-            <!--</div>-->
-            <!--<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">-->
-                <!--<div class="card-body">-->
-                    <!--Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird-->
-                    <!--on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer-->
-                    <!--farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-
-
-        <!--<div class="card">-->
-            <!--<div class="card-header" id="headingThree">-->
-                <!--<h5 class="mb-0">-->
-                    <!--<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">-->
-                        <!--<span style="color:#DB0000;">&#9724;</span> Exámenes-->
-                    <!--</button>-->
-                <!--</h5>-->
-            <!--</div>-->
-            <!--<div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">-->
-                <!--<div class="card-body">-->
-                    <!--Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird-->
-                    <!--on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer-->
-                    <!--farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-
-
-        {% for calendario in calendarios %}
-        {% set calendario_loop = loop %}
-        <div class="card">
-            <div class="card-header" id="heading{{calendario_loop.index}}">
-                <h5 class="mb-0">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse{{calendario_loop.index}}" aria-expanded="false" aria-controls="collapse{{calendario_loop.index}}">
-                        <span style="color:{{calendario['color']}};">&#9724;</span> {{calendario["summary"]}}
-                    </button>
-                </h5>
-            </div>
-            <div id="collapse{{calendario_loop.index}}" class="collapse" aria-labelledby="heading{{calendario_loop.index}}" data-parent="#accordionExample">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm">
-
-                            {% for evento in calendario["events"] %}
-                            {% set event_loop = loop %}
-                            <!--eventos-->
-                            <p>
-                                <a class="btn btn-light" data-toggle="collapse" href="#collapseExample-{{calendario_loop.index}}-{{event_loop.index}}" role="button" aria-expanded="false" aria-controls="collapseExample-{{calendario_loop.index}}-{{event_loop.index}}">
-                                    <span class="badge badge-pill badge-info">{{evento["start"]}}</span> {{evento["summary"]}}{% if evento["description"] != "" %} &#x25BC;{% endif %}
-                                </a>
-                            </p>
-
-                            {% if evento["description"] != "" %}
-                            <div class="collapse" id="collapseExample-{{calendario_loop.index}}-{{event_loop.index}}">
-                                <div class="card card-body border">
-                                    {{evento["description"]}}
-                                </div>
+                        {% if evento["description"] != "" %}
+                        <div class="collapse" id="collapseExample-{{calendario_loop.index}}-{{event_loop.index}}">
+                            <div class="card card-body border">
+                                {{evento["description"]}}
                             </div>
-                            {% endif %}
-                            {% endfor %}
-
-
-
                         </div>
-                        <div class="col-sm">
-                            <div id="map{{calendario_loop.index}}" class="map"></div>
-                        </div>
+                        {% endif %}
+                        {% endfor %}
+
+
+
+                    </div>
+                    <div class="col-sm">
+                        <div id="map{{calendario_loop.index}}" class="map"></div>
                     </div>
                 </div>
             </div>
         </div>
-        {% endfor %}
-
-        <!--cierre del acordeon-->
     </div>
+    {% endfor %}
 
+    <!--cierre del acordeon-->
 </div>
+{% endblock %}
 
-<!-- Mi javascript -->
+{% block mi_javascript %}
 <script type="text/javascript">
     function myMap() {
 
@@ -232,13 +101,6 @@
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBK8NhJ7xM9D12RFRb-krQpMtc06b4nWE0&callback=myMap"></script>
+{% endblock %}
 
-<!--<script src="https://maps.googleapis.com/maps/api/js?callback=myMap"></script>-->
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-</body>
 
-</html>

@@ -36,7 +36,7 @@ class MainHandler(webapp2.RequestHandler):
     def get(self):
         template = JINJA_ENVIRONMENT.get_template("index.html")
         data = {}
-        self.response.out.write(template.render(data))
+        self.response.out.write(template.render(data, title="Inicio"))
 
 
 cliente_id = '598778698756-8d90gr52eqgnn5lv90loa5dookra7k0a.apps.googleusercontent.com'
@@ -96,7 +96,7 @@ class CalendarHandler(BaseHandler):
         calendar_mgr = CalendarManager(self.session['access_token'], api_key)
         data = calendar_mgr.get_calendars()
         template = JINJA_ENVIRONMENT.get_template("calendarios.html")
-        self.response.out.write(template.render(data))
+        self.response.out.write(template.render(data, title="Calendarios"))
 
 
 class EventHandler(BaseHandler):
@@ -108,7 +108,7 @@ class EventHandler(BaseHandler):
         calendar_mgr = CalendarManager(self.session['access_token'], api_key)
         data = calendar_mgr.get_calendars_and_events(calendars)
         template = JINJA_ENVIRONMENT.get_template("eventos.html")
-        self.response.out.write(template.render(data))
+        self.response.out.write(template.render(data, title="Eventos"))
 
 
 app = webapp2.WSGIApplication([
