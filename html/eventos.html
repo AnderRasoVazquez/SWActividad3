@@ -16,7 +16,7 @@
 
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Mapper</a>
+    <a class="navbar-brand" href="/">Mapper</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -24,7 +24,7 @@
     <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Inicio<span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/">Inicio<span class="sr-only">(current)</span></a>
             </li>
         </ul>
     </div>
@@ -192,34 +192,40 @@
         {% for calendario in calendarios %}
         {% set calendario_loop = loop %}
 
-        var myLatLng = [
+            var myLatLng = [
+                {% for evento in calendario["events"] %}
+                    {% if evento["location"]["lat"] != "" %}
+                        { lat: {{ evento["location"]["lat"] }}, lng: {{ evento["location"]["lng"] }}, title: '{{evento["location"]["address"]}}' },
+                    {% endif %}
+                {% endfor %}
+            ];
+
+            var mapOptions = {
+                center: new google.maps.LatLng(43.2626276, -2.9475673),
+            zoom: 4,
+                mapTypeId: google.maps.MapTypeId.HYBRID
+            }
+
             {% for evento in calendario["events"] %}
-                {% if evento["location"]["address"] != "" %}
-                    { lat: {{ evento["location"]["lat"] }}, lng: {{ evento["location"]["lng"] }}, title: '{{evento["location"]["address"]}}' },
+                {% if evento["location"]["lat"] != "" %}
+                    var mapOptions = {
+                        center: new google.maps.LatLng({{ evento["location"]["lat"] }}, {{ evento["location"]["lng"] }}),
+                        zoom: 14,
+                        mapTypeId: google.maps.MapTypeId.HYBRID
+                    }
+                    {% break %}
                 {% endif %}
             {% endfor %}
-        ];
 
-        {% for evento in calendario["events"] %}
-            {% if evento["location"]["address"] != "" %}
-                var mapOptions = {
-                    center: new google.maps.LatLng({{ evento["location"]["lat"] }}, {{ evento["location"]["lng"] }}),
-                    zoom: 14,
-                    mapTypeId: google.maps.MapTypeId.HYBRID
-                }
-                {% break %}
-            {% endif %}
-        {% endfor %}
+            var map = new google.maps.Map(document.getElementById("map{{calendario_loop.index}}"), mapOptions);
+            for(i = 0; i < myLatLng.length; i++) {
+                var marker = new google.maps.Marker({
+                    position: { lat: myLatLng[i]['lat'], lng: myLatLng[i]['lng'] },
+                    title: myLatLng[i]['title'],
+                    map: map
 
-        var map = new google.maps.Map(document.getElementById("map{{calendario_loop.index}}"), mapOptions);
-                        for(i = 0; i < myLatLng.length; i++) {
-                        var marker = new google.maps.Marker({
-                            position: { lat: myLatLng[i]['lat'], lng: myLatLng[i]['lng'] },
-                            title: myLatLng[i]['title'],
-                            map: map
-
-                        });
-                };
+                });
+            };
 
         {% endfor %}
     }
