@@ -155,14 +155,17 @@
                             <!--eventos-->
                             <p>
                                 <a class="btn btn-light" data-toggle="collapse" href="#collapseExample-{{calendario_loop.index}}-{{event_loop.index}}" role="button" aria-expanded="false" aria-controls="collapseExample-{{calendario_loop.index}}-{{event_loop.index}}">
-                                    <span class="badge badge-pill badge-info">{{evento["start"]}}</span> {{evento["summary"]}}
+                                    <span class="badge badge-pill badge-info">{{evento["start"]}}</span> {{evento["summary"]}}{% if evento["description"] != "" %} &#x25BC;{% endif %}
                                 </a>
                             </p>
+
+                            {% if evento["description"] != "" %}
                             <div class="collapse" id="collapseExample-{{calendario_loop.index}}-{{event_loop.index}}">
                                 <div class="card card-body border">
-                                    lol
+                                    {{evento["description"]}}
                                 </div>
                             </div>
+                            {% endif %}
                             {% endfor %}
 
                         </div>

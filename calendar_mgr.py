@@ -162,6 +162,11 @@ class CalendarManager:
             else:
                 tmp_event['summary'] = '(Sin título)'
 
+            if 'description' in event:
+                tmp_event['description'] = event['description']
+            else:
+                tmp_event['description'] = ''
+
             if 'date' in event['start']:
                 # evento de día completo (festivos, etc.)
                 tmp_event['start'] = event['start']['date']
