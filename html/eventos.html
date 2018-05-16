@@ -61,10 +61,15 @@
         {% for calendario in calendarios %}
         {% set calendario_loop = loop %}
 
-            var myLatLng = [
+            var eventInfo = [
                 {% for evento in calendario["events"] %}
                     {% if evento["location"]["lat"] != "" %}
-                        { lat: {{ evento["location"]["lat"] }}, lng: {{ evento["location"]["lng"] }}, title: '{{evento["location"]["address"]}}' },
+                        { lat: {{ evento["location"]["lat"] }},
+                        lng: {{ evento["location"]["lng"] }},
+                        addr: '{{ evento["location"]["address"] }}',
+                        summary: '{{ evento["summary"] }}',
+                        description: '{{ evento["description"] }}',
+                        htmlLink: '{{ evento["htmlLink"] }}'},
                     {% endif %}
                 {% endfor %}
             ];
@@ -86,18 +91,41 @@
                 {% endif %}
             {% endfor %}
 
-            var map = new google.maps.Map(document.getElementById("map{{calendario_loop.index}}"), mapOptions);
-            for(i = 0; i < myLatLng.length; i++) {
-                var marker = new google.maps.Marker({
-                    position: { lat: myLatLng[i]['lat'], lng: myLatLng[i]['lng'] },
-                    title: myLatLng[i]['title'],
-                    map: map
+            map = new google.maps.Map(document.getElementById("map{{calendario_loop.index}}"), mapOptions);
 
+            for(i = 0; i < eventInfo.length; i++) {
+
+                let contentString = '<div class="info_content">' +
+                                    '<a href="' + eventInfo[i]['htmlLink'] + '">' +
+                                    '<h5>' + eventInfo[i]['summary'] + '</h5></a>' +
+                                    '<p>' + eventInfo[i]['description'] + '</p>'
+                                    '</div>';
+
+                let infoWindow = new google.maps.InfoWindow({
+                    content: contentString
                 });
-            };
+
+                let marker = new google.maps.Marker({
+                    position: { lat: eventInfo[i]['lat'], lng: eventInfo[i]['lng'] },
+                    title: eventInfo[i]['title'],
+                    map: map
+                });
+
+                google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                    // fuente
+                    // https://programacion.net/articulo/google_maps_con_multiples_marcadores_y_ventana_de_informacion_mediante_la_api_v3_1738
+
+                    return function() {
+                        infoWindow.open(map, marker);
+                    }
+                })(marker, i));
+
+            }
 
         {% endfor %}
     }
+
+    // google.maps.event.addDomListener(window, 'load', initMap);
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBK8NhJ7xM9D12RFRb-krQpMtc06b4nWE0&callback=myMap"></script>

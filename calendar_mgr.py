@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import json
 import datetime
 import resources.httplib2 as httplib2
@@ -61,6 +62,8 @@ class CalendarManager:
                                     "events":   [
                                                    {
                                                         "summary": value (nombre),
+                                                        "description": value,
+                                                        "htmlLink": value,
                                                         "start": value,
                                                         "location": {
                                                                         "address": value,
@@ -70,7 +73,7 @@ class CalendarManager:
                                                     },
                                                     {
                                                         "summary": value (nombre),
-                                                        "start": value,
+                                                        "description": value,
                                                         ...
                                                     },
                                                     ...
@@ -124,13 +127,19 @@ class CalendarManager:
             "eventos":  [
                             {
                                 "summary": value (nombre),
+                                "description": value,
+                                "htmlLink": value,
                                 "start": value,
-                                "location": value,
+                                "location": {
+                                                "address": value,
+                                                "lat": value,
+                                                "lng": value
+                                            }
                             },
                             {
                                 "summary": value (nombre),
-                                "start": value,
-                                "location": value,
+                                "description": value,
+                                ...
                             },
                             ...
                         ]
@@ -153,6 +162,7 @@ class CalendarManager:
                                       method=method, headers=headers)
 
         json_response = json.loads(body)
+        logging.debug(json_response)
         event_list = []
         for event in json_response['items']:
             tmp_event = {}
@@ -166,6 +176,11 @@ class CalendarManager:
                 tmp_event['description'] = event['description']
             else:
                 tmp_event['description'] = ''
+
+            if 'htmlLink' in event:
+                tmp_event['htmlLink'] = event['htmlLink']
+            else:
+                tmp_event['htmlLink'] = ''
 
             if 'date' in event['start']:
                 # evento de día completo (festivos, etc.)
