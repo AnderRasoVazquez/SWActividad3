@@ -12,6 +12,11 @@ import os
 
 from calendar_mgr import CalendarManager
 
+cliente_id = '598778698756-8d90gr52eqgnn5lv90loa5dookra7k0a.apps.googleusercontent.com'
+cliente_secret = 'VAUirY5cDs7EtM4NuibNMry3'
+api_key = 'AIzaSyBK8NhJ7xM9D12RFRb-krQpMtc06b4nWE0'
+redirect_uri = 'http://swactividad3.appspot.com/callback_uri'
+config = {'webapp2_extras.sessions': {'secret_key': 'my-super-secret-key'}}
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'html')),
@@ -37,13 +42,6 @@ class MainHandler(webapp2.RequestHandler):
         template = JINJA_ENVIRONMENT.get_template("index.html")
         data = {}
         self.response.out.write(template.render(data, title="Inicio"))
-
-
-cliente_id = '598778698756-8d90gr52eqgnn5lv90loa5dookra7k0a.apps.googleusercontent.com'
-cliente_secret = 'VAUirY5cDs7EtM4NuibNMry3'
-api_key = 'AIzaSyBK8NhJ7xM9D12RFRb-krQpMtc06b4nWE0'
-redirect_uri = 'http://swactividad3.appspot.com/callback_uri'
-config = {'webapp2_extras.sessions': {'secret_key': 'my-super-secret-key'}}
 
 
 class LoginAndAuthorize(BaseHandler):
