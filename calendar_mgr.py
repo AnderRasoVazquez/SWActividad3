@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import logging
 import json
 import datetime
 import resources.httplib2 as httplib2
@@ -162,7 +161,6 @@ class CalendarManager:
                                       method=method, headers=headers)
 
         json_response = json.loads(body)
-        logging.debug(json_response)
         event_list = []
         for event in json_response['items']:
             tmp_event = {}
